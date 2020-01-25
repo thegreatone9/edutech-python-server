@@ -13,7 +13,6 @@ import glob
 import time
 from PIL import Image
 from io import BytesIO
-from io import StringIO
 import caffe
 
 
@@ -27,16 +26,16 @@ def resize_image(data, sz=(256, 256)):
         The resized image dimensions
     :returns bytearray:
         A byte array with the resized image
+    visit pymotow.com/3/io to see how BytesIO is being used here
     """
-    img_data = str(data)  #convert image data to string
-    im = Image.open(BytesIO(img_data)) #create an Image object to open
+    im = Image.open(BytesIO(data)) #create an Image object from rec bytes 
     if im.mode != "RGB":
         im = im.convert('RGB')       #convert image to RGB 
     imr = im.resize(sz, resample=Image.BILINEAR) #resize image
-    fh_im = BytesIO()                            #convert
-    imr.save(fh_im, format='JPEG')
-    fh_im.seek(0)
-    return bytearray(fh_im.read())
+    fh_im = BytesIO()                            #create buffer object
+    imr.save(fh_im, format='JPEG')               #save resized image to buffer
+    fh_im.seek(0)                                #seek to 0 position in buffer
+    return bytearray(fh_im.read())               #return buffer
 
 
 
